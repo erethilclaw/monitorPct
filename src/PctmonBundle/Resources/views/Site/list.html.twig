@@ -1,0 +1,83 @@
+{% extends "base.html.twig" %}
+{% block title %}Llista llocs{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <!-- DataTables -->
+    <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('plugins/datatables/dataTables.bootstrap.min.js') }}"></script>
+
+    <!-- page script -->
+    <script>
+        $(function () {
+            $("#example1").DataTable();
+            $('#example2').DataTable({
+                "paging": true,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": true,
+                "info": true,
+                "autoWidth": false
+            });
+        });
+    </script>
+{% endblock %}
+    {% block page_content %}
+        <!-- Page Content -->
+        <div class="col-xs-12">
+            <div class="box">
+                <div class="box-header">
+                    <h4>Llista llocs</h4>
+                    <a href="{{ path('nou_site') }}">Afegir lloc</a>
+                </div>
+                <div class="box-body">
+                    <table id="example2" class="table table-bordered table-hover table-striped">
+                        <thead>
+                        <tr>
+                            <th><i class="glyphicon glyphicon-globe"></i>Url</th>
+                            <th><i class="glyphicon glyphicon-link"></i>Ip</th>
+                            <th><i class="glyphicon glyphicon-pencil"></i>Text</th>
+                            <th><i class="glyphicon glyphicon-comment"></i>Nota</th>
+                            <th><i class="glyphicon glyphicon-user"></i>Destinataris</th>
+                            <th><i class="glyphicon glyphicon-envelope"></i>Email</th>
+                            {% if is_granted('ROLE_ADMIN') %}
+                            <th><i class="glyphicon glyphicon-wrench"></i>Accions</th>
+                            {% endif %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for site in sites %}
+                            <tr>
+                                <td><a href="{{ path('site_show', {  'id':site.id }) }}">{{ site.url }}</a></td>
+                                <td>{% for ip in site.getIp(site.url) %}
+                                    <a href="{{ path('site_show', {  'id':site.id }) }}">{{ip}}</a>
+                                    {% endfor %}
+                                </td>
+                                <td><a href="{{ path('site_show', {  'id':site.id }) }}">{{ site.text }}</a></td>
+                                <td><a href="{{ path('site_show', {  'id':site.id }) }}">{{ site.nota }}</a></td>
+                                <td>
+                                    {% for destinatari in site.destinataris %}
+                                        <a href="{{ path('destinatari_show', {  'id':destinatari.id }) }}"><p>{{ destinatari.nom }}</p></a>
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% for destinatari in site.destinataris %}
+                                        <a href="{{ path('destinatari_show', {  'id':destinatari.id }) }}"> <p>{{ destinatari.email }}</p></a>
+                                    {% endfor %}
+                                </td>
+                                <td>
+                                    {% if is_granted('ROLE_ADMIN') %}
+                                        <a href="{{ path('site_edit', { 'id': site.id }) }}"><span
+                                                    class="glyphicon glyphicon-pencil"></span>editar</a><br>
+                                        <a href="{{ path('site_delete', { 'id':site.id }) }}" onclick="
+return confirm('¿Estas segur que vols eliminar aquest lloc?')"><span
+                                                    class="glyphicon glyphicon-trash" id="eliminar"></span>eliminar</a>
+                                    {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- /.container -->
+    {% endblock %}

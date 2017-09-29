@@ -1,0 +1,138 @@
+{% extends "base.html.twig" %}
+{% block title %}Editar lloc{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script type="text/javascript">
+        var $collectionHolder;
+
+        // setup an "add a tag" link
+        var $addDestinatariLink = $('<a href="#" class="add_destinatari_link">Add a destinatari</a>');
+        var $newLinkLi = $('<li></li>').append($addDestinatariLink);
+
+        jQuery(document).ready(function () {
+            // Get the ul that holds the collection of tags
+            $collectionHolder = $('ul.destinataris');
+
+            // add a delete link to all of the existing tag form li elements
+            $collectionHolder.find('li').each(function () {
+                addDestinatariFormDeleteLink($(this));
+            });
+
+            // add the "add a tag" anchor and li to the tags ul
+            $collectionHolder.append($newLinkLi);
+
+            // count the current form inputs we have (e.g. 2), use that as the new
+            // index when inserting a new item (e.g. 2)
+            $collectionHolder.data('index', $collectionHolder.find(':input').length);
+
+            $addDestinatariLink.on('click', function (e) {
+                // prevent the link from creating a "#" on the URL
+                e.preventDefault();
+
+                // add a new tag form (see next code block)
+                addDestinatariForm($collectionHolder, $newLinkLi);
+            });
+        });
+
+        function addDestinatariForm($collectionHolder, $newLinkLi) {
+            // Get the data-prototype explained earlier
+            var prototype = $collectionHolder.data('prototype');
+
+            // get the new index
+            var index = $collectionHolder.data('index');
+
+            // Replace '__name__' in the prototype's HTML to
+            // instead be a number based on how many items we have
+            var newForm = prototype.replace(/__name__/g, index);
+
+            // increase the index with one for the next item
+            $collectionHolder.data('index', index + 1);
+
+            // Display the form in the page in an li, before the "Add a tag" link li
+            var $newFormLi = $('<li></li>').append(newForm);
+            $newLinkLi.before($newFormLi);
+
+            // add a delete link to the new form
+            addDestinatariFormDeleteLink($newFormLi);
+        }
+
+        function addDestinatariFormDeleteLink($destinatariFormLi) {
+            var $removeFormA = $('<a href="#">delete this destinatari</a>');
+            $destinatariFormLi.append($removeFormA);
+
+            $removeFormA.on('click', function (e) {
+                // prevent the link from creating a "#" on the URL
+                e.preventDefault();
+
+                // remove the li for the tag form
+                $destinatariFormLi.remove();
+            });
+        }
+    </script>
+{% endblock %}
+    {% block page_content %}
+        <!-- Page Content -->
+        <div class="col-md-6 col-lg-6 col-sm-6 col-lg-offset-3 col-md-offset-3 col-sm-offset-3">
+            <div class="box box-primary">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <div class="box-header with-border">
+                        <h3 class="box-title">Editar lloc</h3><br>
+                        <a href="{{ path('site_index') }}">Tornar a llistat</a>
+                    </div>
+                    <div class="box-body">
+                        {{ form_start(edit_form) }}
+                        {{ form_errors(edit_form) }}
+                        <div class="form-group ">
+                            <i class="glyphicon glyphicon-globe"></i>
+                            {{ form_label(edit_form.url) }}
+                            {{ form_errors(edit_form.url) }}
+                            {{ form_widget(edit_form.url, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="form-group">
+                            <i class="glyphicon glyphicon-pencil"></i>
+                            {{ form_label(edit_form.text) }}
+                            {{ form_errors(edit_form.text) }}
+                            {{ form_widget(edit_form.text, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="form-group">
+                            <i class="glyphicon glyphicon-comment"></i>
+                            {{ form_label(edit_form.nota) }}
+                            {{ form_errors(edit_form.nota) }}
+                            {{ form_widget(edit_form.nota, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="form-group">
+                            <i class="glyphicon glyphicon-user"></i>
+                            <label>destinatari</label>
+                            <ul class="destinataris"
+                                data-prototype="{{ form_widget(edit_form.destinataris.vars.prototype)|e }}">
+                                {# iterate over each existing tag and render its only field: name #}
+                                {% for destinatari in edit_form.destinataris %}
+                                    <li>
+                                        {{ form_errors(destinatari) }}
+                                        {{ form_widget(destinatari) }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                    <button class="btn btn-primary" type="submit">edit site</button>
+                    {{ form_end(edit_form) }}
+
+                    <a href="{{ path('site_delete', { 'id':site.id }) }}" onclick="
+return confirm('¿Estas segur que vols eliminar el lloc?')">
+                        <button class="btn btn-danger">Eliminar lloc</button>
+                    </a>
+
+                {% else %}
+                    </div>
+                    <div class="box-header with-border">
+                        <h3 class="box-title">You are not allowed to be here.</h3><br>
+                        <a href="{{ path('destinatari_index') }}">Back to the list</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        </div>
+
+    {% endblock %}

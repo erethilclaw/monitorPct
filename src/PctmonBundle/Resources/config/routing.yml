@@ -1,0 +1,47 @@
+pctmon_homepage:
+    path:     /
+    defaults: { _controller: PctmonBundle:Default:index }
+
+nou_site:
+    path:     /lloc/add_lloc/
+    defaults: {_controller: PctmonBundle:Site:addSite }
+site_index:
+    path:     /lloc/
+    defaults: { _controller: PctmonBundle:Site:list }
+site_show:
+    path:     /lloc/show_lloc/{id}
+    defaults: { _controller: PctmonBundle:Site:show }
+site_edit:
+    path:     /lloc/edit_lloc/{id}
+    defaults: { _controller: PctmonBundle:Site:edit }
+site_delete:
+    path:     /lloc/delete_lloc/{id}
+    defaults: { _controller: PctmonBundle:Site:delete }
+
+security_homepage:
+    path:     /inici/
+    defaults: { _controller: PctmonBundle:Security:index }
+
+destinatari_index:
+    path:     /destinatari/
+    defaults: { _controller: PctmonBundle:Destinatari:llista }
+destinatari_add:
+    path:     /destinatari/add_destinatari/
+    defaults: { _controller: PctmonBundle:Destinatari:add }
+destinatari_show:
+    path:     /destinatari/show_destinatari/{id}
+    defaults: { _controller: PctmonBundle:Destinatari:show }
+destinatari_edit:
+    path:     /destinatari/edit_destinatari/{id}
+    defaults: { _controller: PctmonBundle:Destinatari:edit }
+destinatari_delete:
+    path:     /destinatari/delete_destinatari/{id}
+    defaults: { _controller: PctmonBundle:Destinatari:delete }
+
+login:
+    path:     /login/
+    defaults: { _controller: PctmonBundle:Security:login }
+login_check:
+    path: /login_check
+logout:
+    path: /logout

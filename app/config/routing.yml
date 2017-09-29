@@ -1,0 +1,7 @@
+pctmon:
+    resource: "@PctmonBundle/Resources/config/routing.yml"
+    prefix:   /
+app:
+    resource: '@AppBundle/Controller/'
+    type: annotation
+
